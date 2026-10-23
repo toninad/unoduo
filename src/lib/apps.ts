@@ -1,5 +1,6 @@
 import "server-only";
 import { cacheLife, cacheTag } from "next/cache";
+import { DEMO_APPS, isDemoMode } from "@/lib/demo";
 import { isSupabaseConfigured, supabaseAdmin } from "@/lib/supabase";
 
 export const APPS_TAG = "apps";
@@ -35,6 +36,7 @@ export async function getRankedApps(): Promise<RankedApp[]> {
   cacheLife("minutes");
 
   if (!isSupabaseConfigured()) {
+    if (isDemoMode()) return DEMO_APPS;
     console.warn("Supabase is not configured; showing an empty leaderboard.");
     return [];
   }

@@ -5,11 +5,13 @@ import { redirect } from "next/navigation";
 import { updateTag } from "next/cache";
 import { lookupApp, parseAppStoreUrl } from "@/lib/appstore";
 import { APPS_TAG } from "@/lib/apps";
-import { supabaseAdmin } from "@/lib/supabase";
+import { isSupabaseConfigured, supabaseAdmin } from "@/lib/supabase";
 import { MAX_BOOST_DOLLARS, MIN_BOOST_DOLLARS } from "@/lib/boost";
 import { stripe } from "@/lib/stripe";
 
 export type FormState = { error?: string };
+
+const NOT_CONFIGURED = "The database isn't connected yet, so this can't be saved. Add the Supabase keys to .env.local.";
 
 async function siteUrl() {
   if (process.env.SITE_URL) return process.env.SITE_URL.replace(/\/$/, "");
@@ -22,6 +24,7 @@ async function siteUrl() {
 export async function submitApp(_prev: FormState, formData: FormData): Promise<FormState> {
   // Honeypot: real people never fill this hidden field.
   if (formData.get("website")) return {};
+  if (!isSupabaseConfigured()) return { error: NOT_CONFIGURED };
 
   const parsed = parseAppStoreUrl(String(formData.get("appStoreUrl") ?? ""));
   if (!parsed) {
@@ -62,6 +65,7 @@ export async function submitApp(_prev: FormState, formData: FormData): Promise<F
 }
 
 export async function startBoost(_prev: FormState, formData: FormData): Promise<FormState> {
+  if (!isSupabaseConfigured()) return { error: NOT_CONFIGURED };
   const appStoreId = Number(formData.get("appStoreId"));
   const dollars = Number(formData.get("amount"));
   if (!Number.isInteger(dollars) || dollars < MIN_BOOST_DOLLARS || dollars > MAX_BOOST_DOLLARS) {
