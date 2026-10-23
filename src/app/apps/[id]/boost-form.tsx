@@ -30,10 +30,10 @@ export function BoostForm({
             key={chip.label}
             type="button"
             onClick={() => setAmount(String(chip.dollars))}
-            className={`rounded-full border px-3 py-1.5 text-sm transition-colors ${
+            className={`rounded-lg border px-3 py-1.5 text-[15px] ${
               amount === String(chip.dollars)
-                ? "border-accent-2 bg-accent-2/10"
-                : "border-border hover:border-muted"
+                ? "border-foreground bg-foreground text-background"
+                : "border-rule hover:border-muted"
             }`}
           >
             {chip.label === `$${chip.dollars}` ? chip.label : `${chip.label} · $${chip.dollars}`}
@@ -41,7 +41,7 @@ export function BoostForm({
         ))}
       </div>
       <div className="flex gap-3">
-        <label className="flex flex-1 items-center gap-2 rounded-xl border border-border bg-background px-4 focus-within:border-accent-2">
+        <label className="flex flex-1 items-center gap-1 rounded-lg border border-rule bg-background px-3 focus-within:border-foreground">
           <span className="text-muted">$</span>
           <input
             name="amount"
@@ -54,24 +54,24 @@ export function BoostForm({
             value={amount}
             onChange={(e) => setAmount(e.target.value)}
             aria-label="Boost amount in US dollars"
-            className="w-full bg-transparent py-3 outline-none"
+            className="w-full bg-transparent py-2.5 text-[16px] outline-none"
           />
         </label>
         <button
           type="submit"
           disabled={pending}
-          className="rounded-full px-6 py-3 font-medium text-white duo-gradient disabled:opacity-60"
+          className="rounded-lg bg-foreground px-5 py-2.5 text-[15px] font-medium text-background disabled:opacity-50"
         >
-          {pending ? "Opening checkout…" : "Boost"}
+          {pending ? "Opening checkout…" : "Pay"}
         </button>
       </div>
       {state.error && (
-        <p role="alert" className="text-sm text-accent">
+        <p role="alert" className="text-[15px] text-red-600 dark:text-red-400">
           {state.error}
         </p>
       )}
-      <p className="text-xs text-muted">
-        Payments go through Stripe. Boosts are non-refundable and only affect rank.
+      <p className="text-[13px] text-muted">
+        Paid through Stripe. Non-refundable. Only affects rank.
       </p>
     </form>
   );
